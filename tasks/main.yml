@@ -1,0 +1,21 @@
+---
+
+- name: Download Gradle {{gradle_version}}
+  get_url: dest="{{ gradle_cache_dir }}" url=https://services.gradle.org/distributions/{{gradle_zipfile}}
+  become: yes
+  tags: [gradle]
+
+- name: Extract Gradle
+  unarchive: copy=no src={{ gradle_cache_dir }}/{{gradle_zipfile}} dest=/usr/local/share/
+  become: yes
+  tags: [gradle]
+
+- name: Add Gradle executable symlink to path
+  file: src=/usr/local/share/{{gradle_folder}}/bin/gradle dest=/usr/local/bin/gradle state=link
+  become: yes
+  tags: [gradle]
+
+- name: Add Gradle environment variables to profile
+  template: src=gradle.j2 dest=/etc/profile.d/gradle.sh
+  become: yes
+  tags: [gradle]
